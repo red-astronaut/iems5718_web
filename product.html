@@ -6,6 +6,7 @@
     <title>Product Details</title>
     <link rel="stylesheet" href="style.css">
     <script src="productdata.js" defer></script>
+    <script src="cart.js" defer></script>
     <script defer>
         document.addEventListener('DOMContentLoaded', function() {
             // Get productid from URL parameters
@@ -13,7 +14,6 @@
             const productid = urlParams.get('productid');
             const product = getProductDetails(productid); // Get product details from productData.js
 
-            
             if (product) {
                 // Fill the product details into the HTML
                 document.querySelector('.product-image img').src = product.image;
@@ -21,7 +21,6 @@
                 document.querySelector('.product-info h2').textContent = `Name: ${product.name}`;
                 document.querySelector('.product-info .description').textContent = `Description: ${product.description}`;
                 document.querySelector('.product-info .price').textContent = `Price: $${product.price.toFixed(2)}`;
-                
 
                 // Add hierarchical navigation menu
                 const breadcrumb = document.createElement('nav');
@@ -37,41 +36,16 @@
 
                 // Add to cart functionality
                 const addToCartButton = document.getElementById('addToCartButton');
+                const quantityInput = document.getElementById('quantityInput');
 
                 addToCartButton.addEventListener('click', function() {
-                    // Disable the button to prevent repeated clicks
-                    addToCartButton.disabled = true;
-                    addToCartButton.textContent = "Adding..."; // Change button text
-
-                    // Get the current cart from localStorage
-                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-                    // Check if the product is already in the cart
-                    let found = false;
-                    for (let item of cart) {
-                        if (item.productid === productid) {
-                            item.quantity++;
-                            found = true;
-                            break;
-                        }
+                    const quantity = parseInt(quantityInput.value);
+                    if (quantity > 0) {
+                        addToCart(productid, quantity); // Call addToCart function from cart.js with quantity
+                        alert('Success to add item');
+                    } else {
+                        alert('Please enter a valid quantity');
                     }
-
-                    // If not found, add it as a new item
-                    if (!found) {
-                        cart.push({ productid: productid, quantity: 1 });
-                    }
-
-                    // Save the updated cart to localStorage
-                    localStorage.setItem('cart', JSON.stringify(cart));
-
-                    // After the action, re-enable the button and reset text
-                    setTimeout(() => {
-                        addToCartButton.disabled = false;
-                        addToCartButton.textContent = "Add to Cart"; // Reset button text
-                    }, 1000); // Re-enable after 1 second for a better user experience
-
-                    // Alert user
-                    alert('Item added to cart!');
                 });
             } else {
                 // If product is not found
@@ -86,8 +60,13 @@
         <h1>Product Details</h1>
         <nav>
             <ul>
-                <li><a href="cart.html">Cart</a></li>
-                
+                <li><a href="index.html">Home</a></li>
+                <li class="shopping-list">
+                    <a href="cart.html">Cart</a>
+                    <ul class="dropdown" id="shopping-list-dropdown">
+                        <!-- Shopping list items will be dynamically inserted here -->
+                    </ul>
+                </li>
             </ul>
         </nav>
     </header>
@@ -101,6 +80,10 @@
                 <h2 id="productName"></h2>
                 <p class="description" id="productDescription"></p>
                 <p class="price" id="productPrice"></p>
+                <div class="quantity-container">
+                    <label for="quantityInput">Quantity:</label>
+                    <input type="number" id="quantityInput" name="quantity" value="1" min="1">
+                </div>
                 <button id="addToCartButton">Add to Cart</button>
             </div>
         </section>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShoppingRed - Home</title>
     <link rel="stylesheet" href="style.css">
+    <script src="productdata.js" defer></script>
+    <script src="cart.js" defer></script>
 </head>
 <body>
 
@@ -13,7 +15,12 @@
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="cart.html">Cart</a></li>
+                <li class="shopping-list">
+                    <a href="cart.html">Cart</a>
+                    <ul class="dropdown" id="shopping-list-dropdown">
+
+                    </ul>
+                </li>
             </ul>
         </nav>
     </header>
@@ -38,11 +45,11 @@
                 </a>
             </div>
 
-            <!-- Category 3: disney Gifts -->
+            <!-- Category 3: Disney Gifts -->
             <div class="category">
                 <a href="disney_gifts.html">
-                    <img src="Figure/disney_cate.png" alt="disney Gifts">
-                    <h3>disney Gifts</h3>
+                    <img src="Figure/disney_cate.png" alt="Disney Gifts">
+                    <h3>Disney Gifts</h3>
                     <p>Exclusive disney-themed gifts for you.</p>
                 </a>
             </div>
