@@ -6,7 +6,7 @@
     <title>Your Shopping Cart</title>
     <link rel="stylesheet" href="style.css">
     <!-- Link to the external JavaScript file for product data -->
-    <script src="productData.js" defer></script>
+    <script src="productdata.js" defer></script>
     
 </head>
 <body>
@@ -61,7 +61,7 @@
             // Loop through the cart items and add them to the table
             cart.forEach(item => {
                 // Retrieve product details from productData (imported from productData.js)
-                const product = getProductDetails(item.productId); // Using the function from productData.js
+                const product = getProductDetails(item.productid); // Using the function from productData.js
                 if (product) {
                     const subtotal = product.price * item.quantity;
                     totalPrice += subtotal;
@@ -72,12 +72,12 @@
                         <td>${product.name}</td>
                         <td>$${product.price}</td>
                         <td>
-                            <button onclick="updateQuantity('${item.productId}', -1)">-</button>
+                            <button onclick="updateQuantity('${item.productid}', -1)">-</button>
                             ${item.quantity}
-                            <button onclick="updateQuantity('${item.productId}', 1)">+</button>
+                            <button onclick="updateQuantity('${item.productid}', 1)">+</button>
                         </td>
                         <td>$${subtotal}</td>
-                        <td><button onclick="removeFromCart('${item.productId}')">Remove</button></td>
+                        <td><button onclick="removeFromCart('${item.productid}')">Remove</button></td>
                     `;
                     cartItemsContainer.appendChild(row);
                 }
@@ -88,11 +88,11 @@
         }
 
         // Update product quantity
-        function updateQuantity(productId, change) {
+        function updateQuantity(productid, change) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
             // Find the product in the cart and update its quantity
-            const item = cart.find(item => item.productId === productId);
+            const item = cart.find(item => item.productid === productid);
             if (item) {
                 item.quantity += change;
                 if (item.quantity <= 0) item.quantity = 1; // Ensure quantity is at least 1
@@ -106,11 +106,11 @@
         }
 
         // Remove product from cart
-        function removeFromCart(productId) {
+        function removeFromCart(productid) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
             // Filter out the product to remove it from the cart
-            cart = cart.filter(item => item.productId !== productId);
+            cart = cart.filter(item => item.productid !== productid);
 
             // Save the updated cart to localStorage
             localStorage.setItem('cart', JSON.stringify(cart));

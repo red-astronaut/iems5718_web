@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
     <link rel="stylesheet" href="style.css">
-    <script src="productData.js" defer></script>
+    <script src="productdata.js" defer></script>
     <script defer>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get productId from URL parameters
+            // Get productid from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('productId');
-            const product = getProductDetails(productId); // Get product details from productData.js
+            const productid = urlParams.get('productid');
+            const product = getProductDetails(productid); // Get product details from productData.js
 
             
             if (product) {
@@ -49,7 +49,7 @@
                     // Check if the product is already in the cart
                     let found = false;
                     for (let item of cart) {
-                        if (item.productId === productId) {
+                        if (item.productid === productid) {
                             item.quantity++;
                             found = true;
                             break;
@@ -58,7 +58,7 @@
 
                     // If not found, add it as a new item
                     if (!found) {
-                        cart.push({ productId: productId, quantity: 1 });
+                        cart.push({ productid: productid, quantity: 1 });
                     }
 
                     // Save the updated cart to localStorage

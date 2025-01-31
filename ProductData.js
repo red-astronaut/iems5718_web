@@ -1,6 +1,6 @@
-// productData.js
+// productdata.js
 
-const productData = {
+const productdata = {
     1: {
         name: 'Calendar',
         description: 'A moveable calendar with adjustable labels.',
@@ -27,25 +27,25 @@ const productData = {
         description: 'A cute Duffy doll.',
         price: 30.00,
         image: 'Figure/Duffy.png',
-        category: 'Disney Gifts'
+        category: 'disney Gifts'
     },
     5: {
         name: 'Beller doll',
         description: 'A cute Beller doll.',
         price: 188.00,
         image: 'Figure/Beller.png',
-        category: 'Disney Gifts'
+        category: 'disney Gifts'
     },
     6: {
         name: 'Olu doll',
         description: 'A cute and cool Olu doll.',
         price: 999.00,
         image: 'Figure/olu.png',
-        category: 'Disney Gifts'
+        category: 'disney Gifts'
     }
 };
 
-// Function to get product details by productId
-function getProductDetails(productId) {
-    return productData[productId];
+// Function to get product details by productid
+function getProductDetails(productid) {
+    return productdata[productid];
 }
