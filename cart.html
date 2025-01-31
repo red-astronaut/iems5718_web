@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Link to the external JavaScript file for product data -->
+    <script src="productData.js" defer></script>
+    
+</head>
+<body>
+
+    <header>
+        <h1>Your Shopping Cart</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <table class="cart-table" id="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Cart items will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div>
+            <p>Total: $<span id="total-price">0</span></p>
+        </div>
+
+        <button id="clearCartButton">Clear Cart</button>
+        <button id="checkoutButton">Checkout</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 ShoppingRed Mall</p>
+    </footer>
+
+    <script>
+        // Load cart from localStorage
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = ''; // Clear the cart content
+
+            let totalPrice = 0;
+
+            // Loop through the cart items and add them to the table
+            cart.forEach(item => {
+                // Retrieve product details from productData (imported from productData.js)
+                const product = getProductDetails(item.productId); // Using the function from productData.js
+                if (product) {
+                    const subtotal = product.price * item.quantity;
+                    totalPrice += subtotal;
+
+                    // Create a new row for each cart item
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>$${product.price}</td>
+                        <td>
+                            <button onclick="updateQuantity('${item.productId}', -1)">-</button>
+                            ${item.quantity}
+                            <button onclick="updateQuantity('${item.productId}', 1)">+</button>
+                        </td>
+                        <td>$${subtotal}</td>
+                        <td><button onclick="removeFromCart('${item.productId}')">Remove</button></td>
+                    `;
+                    cartItemsContainer.appendChild(row);
+                }
+            });
+
+            // Update the total price on the page
+            document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+        }
+
+        // Update product quantity
+        function updateQuantity(productId, change) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Find the product in the cart and update its quantity
+            const item = cart.find(item => item.productId === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) item.quantity = 1; // Ensure quantity is at least 1
+            }
+
+            // Save the updated cart to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Reload the cart display
+            loadCart();
+        }
+
+        // Remove product from cart
+        function removeFromCart(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Filter out the product to remove it from the cart
+            cart = cart.filter(item => item.productId !== productId);
+
+            // Save the updated cart to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Reload the cart display
+            loadCart();
+        }
+
+        // Clear all items in the cart
+        document.getElementById('clearCartButton').addEventListener('click', function () {
+            if (confirm("Are you sure you want to clear your cart?")) {
+                localStorage.removeItem('cart');
+                loadCart();
+            }
+        });
+
+        // Checkout functionality
+        document.getElementById('checkoutButton').addEventListener('click', function () {
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent);
+            if (totalPrice > 0) {
+                if (confirm('Total price is $' + totalPrice + '. Proceed to checkout?')) {
+                    // Clear cart after checkout
+                    localStorage.removeItem('cart');
+                    loadCart();
+                    alert('Thank you for your purchase!');
+                }
+            } else {
+                alert('Your cart is empty. Add items to the cart before checkout.');
+            }
+        });
+
+        // Load the cart when the page loads
+        window.onload = loadCart;
+    </script>
+
+</body>
+</html>

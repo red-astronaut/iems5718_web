@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="productData.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get productId from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('productId');
+            const product = getProductDetails(productId); // Get product details from productData.js
+
+            
+            if (product) {
+                // Fill the product details into the HTML
+                document.querySelector('.product-image img').src = product.image;
+                document.querySelector('.product-image img').alt = `Name: ${product.name}`;
+                document.querySelector('.product-info h2').textContent = `Name: ${product.name}`;
+                document.querySelector('.product-info .description').textContent = `Description: ${product.description}`;
+                document.querySelector('.product-info .price').textContent = `Price: $${product.price.toFixed(2)}`;
+                
+
+                // Add hierarchical navigation menu
+                const breadcrumb = document.createElement('nav');
+                breadcrumb.setAttribute('aria-label', 'breadcrumb');
+                breadcrumb.innerHTML = `
+                    <ol class="breadcrumb">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="${product.category.toLowerCase().replace(' ', '_')}.html">${product.category}</a></li>
+                        <li>${product.name}</li>
+                    </ol>
+                `;
+                document.querySelector('main').insertBefore(breadcrumb, document.querySelector('.product-detail'));
+
+                // Add to cart functionality
+                const addToCartButton = document.getElementById('addToCartButton');
+
+                addToCartButton.addEventListener('click', function() {
+                    // Disable the button to prevent repeated clicks
+                    addToCartButton.disabled = true;
+                    addToCartButton.textContent = "Adding..."; // Change button text
+
+                    // Get the current cart from localStorage
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+                    // Check if the product is already in the cart
+                    let found = false;
+                    for (let item of cart) {
+                        if (item.productId === productId) {
+                            item.quantity++;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    // If not found, add it as a new item
+                    if (!found) {
+                        cart.push({ productId: productId, quantity: 1 });
+                    }
+
+                    // Save the updated cart to localStorage
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    // After the action, re-enable the button and reset text
+                    setTimeout(() => {
+                        addToCartButton.disabled = false;
+                        addToCartButton.textContent = "Add to Cart"; // Reset button text
+                    }, 1000); // Re-enable after 1 second for a better user experience
+
+                    // Alert user
+                    alert('Item added to cart!');
+                });
+            } else {
+                // If product is not found
+                document.querySelector('.product-info').innerHTML = '<p>Product not found.</p>';
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <header>
+        <h1>Product Details</h1>
+        <nav>
+            <ul>
+                <li><a href="cart.html">Cart</a></li>
+                
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="product-detail">
+            <div class="product-image">
+                <img src="" alt="Product Image" id="productImage">
+            </div>
+            <div class="product-info">
+                <h2 id="productName"></h2>
+                <p class="description" id="productDescription"></p>
+                <p class="price" id="productPrice"></p>
+                <button id="addToCartButton">Add to Cart</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 ShoppingRed Mall</p>
+    </footer>
+
+</body>
+</html>

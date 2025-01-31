@@ -1,0 +1,229 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+header, footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.breadcrumb li {
+    margin-right: 5px;
+}
+
+.breadcrumb li a {
+    color: blue;
+    text-decoration: none;
+}
+
+.breadcrumb li a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb li::after {
+    content: '>';
+    margin-left: 5px;
+}
+
+.breadcrumb li:last-child::after {
+    content: '';
+}
+
+/* Categories Layout */
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.category {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+    width: calc(25% - 20px); /* Each category takes 1/4 of the row width (adjustable) */
+    box-sizing: border-box;
+}
+
+.category img {
+    max-width: 100%;
+    height: 70%;
+    margin-bottom: 10px;
+}
+
+.category h3 {
+    margin-top: 10px;
+}
+
+/* Adjust for responsiveness on medium screens */
+@media (max-width: 1024px) {
+    .category {
+        width: calc(33.33% - 20px); /* Adjust to 3 categories per row on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .category {
+        width: calc(50% - 20px); /* Adjust to 2 categories per row on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .category {
+        width: 100%; /* Adjust to 1 category per row on mobile screens */
+    }
+}
+
+/* Additional styles for products */
+.product-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.product {
+    background-color: white;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    width: 200px;
+    text-align: center;
+}
+
+.product img {
+    max-width: 100%;
+    max-height: 100%;
+    height: 60%;
+}
+
+/* Button styles */
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Product Details Layout */
+.product-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.product-image {
+    width: 40%; /* Set image section width */
+    text-align: center;
+}
+
+.product-info {
+    width: 55%; /* Set info section width */
+}
+
+.product-info h2 {
+    margin-bottom: 10px;
+}
+
+.product-info p {
+    margin-bottom: 10px;
+}
+
+/* Product Image Styling */
+.product-image img {
+    max-width: 100%;   
+    height: auto;      
+    max-height: 400px; 
+}
+
+/* Button inside product-info */
+.product-info button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.product-info button:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-detail {
+        flex-direction: column;  /* Switch to column layout on smaller screens */
+        align-items: center;
+    }
+
+    .product-image, .product-info {
+        width: 90%; /* Adjust width for smaller screens */
+    }
+}
+
+/* Cart Table Styles */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart-table th, .cart-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.cart-table th {
+    background-color: #f4f4f4;
+}
+
+.cart-table td input {
+    width: 50px;
+}
