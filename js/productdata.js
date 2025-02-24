@@ -27,21 +27,28 @@ const productdata = {
         description: 'A cute Duffy doll.',
         price: 30.00,
         image: '../Figure/Duffy.png',
-        category: 'disney Gifts'
+        category: 'Disney Gifts'
     },
     5: {
         name: 'Beller doll',
         description: 'A cute Beller doll.',
         price: 188.00,
         image: '../Figure/Beller.png',
-        category: 'disney Gifts'
+        category: 'Disney Gifts'
     },
     6: {
         name: 'Olu doll',
         description: 'A cute and cool Olu doll.',
         price: 999.00,
         image: '../Figure/olu.png',
-        category: 'disney Gifts'
+        category: 'Disney Gifts'
+    },
+    7: {
+        name: 'pincers',
+        description: 'A good pincers.',
+        price: 5.60,
+        image: '../Figure/pincers.png',
+        category: 'Tools'
     }
 };
 
