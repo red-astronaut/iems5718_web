@@ -83,7 +83,7 @@ main {
     border: 1px solid #ddd;
     padding: 15px;
     text-align: center;
-    width: calc(25% - 20px); /* Each category takes 1/4 of the row width (adjustable) */
+    width: calc(33.33% - 20px); /* Each category takes 1/3 of the row width (adjustable) */
     box-sizing: border-box;
 }
 
@@ -101,19 +101,13 @@ main {
 /* Adjust for responsiveness on medium screens */
 @media (max-width: 1024px) {
     .category {
-        width: calc(33.33% - 20px); /* Adjust to 3 categories per row on medium screens */
+        width: calc(50% - 20px); /* Adjust to 2 categories per row on medium screens */
     }
 }
 
 @media (max-width: 768px) {
     .category {
-        width: calc(50% - 20px); /* Adjust to 2 categories per row on smaller screens */
-    }
-}
-
-@media (max-width: 480px) {
-    .category {
-        width: 100%; /* Adjust to 1 category per row on mobile screens */
+        width: 100%; /* Adjust to 1 category per row on smaller screens */
     }
 }
 
@@ -267,4 +261,20 @@ button:hover {
     height: 30px; /* Adjust the height */
     padding: 5px; /* Add padding */
     font-size: 16px; /* Adjust font size */
+}
+
+
+/* New styles for button container */
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-left: 20px;
+}
+
+.category-item, .product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
