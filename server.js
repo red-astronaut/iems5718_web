@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors'); // 引入cors中间件
 const app = express();
 
@@ -75,7 +76,6 @@ app.get('/admin/products', (req, res) => {
 });
 
 // 插入类别
-// 插入类别
 app.post('/addCategory', (req, res) => {
     const name = req.body.name;
     if (!name) {
@@ -84,10 +84,9 @@ app.post('/addCategory', (req, res) => {
     let sql = 'INSERT INTO categories (name) VALUES (?)';
     let query = db.query(sql, [name], (err, result) => {
         if (err) throw err;
-        res.redirect('/html/admin.html');  // 或者使用 res.send() 返回成功信息
+        res.redirect('/html/admin.html');
     });
 });
-
 
 // 删除类别
 app.delete('/deleteCategory/:id', (req, res) => {
@@ -125,6 +124,8 @@ app.post('/addProduct', (req, res) => {
                         let sql = 'INSERT INTO products (catid, name, price, description, image) VALUES (?, ?, ?, ?, ?)';
                         let query = db.query(sql, [req.body.catid, req.body.name, req.body.price, req.body.description, thumbnailPath], (err, result) => {
                             if (err) throw err;
+                            updateCategoryPage(req.body.catid);
+                            updateProductData();
                             res.redirect('/html/admin.html');
                         });
                     });
@@ -135,10 +136,17 @@ app.post('/addProduct', (req, res) => {
 
 // 删除产品
 app.delete('/deleteProduct/:id', (req, res) => {
-    let sql = 'DELETE FROM products WHERE pid = ?';
-    let query = db.query(sql, [req.params.id], (err, result) => {
+    let sql = 'SELECT catid FROM products WHERE pid = ?';
+    db.query(sql, [req.params.id], (err, result) => {
         if (err) throw err;
-        res.send('Product deleted');
+        const catid = result[0].catid;
+        let deleteSql = 'DELETE FROM products WHERE pid = ?';
+        db.query(deleteSql, [req.params.id], (err, result) => {
+            if (err) throw err;
+            updateCategoryPage(catid);
+            updateProductData();
+            res.send('Product deleted');
+        });
     });
 });
 
@@ -147,9 +155,133 @@ app.put('/updateProduct/:id', (req, res) => {
     let sql = 'UPDATE products SET catid = ?, name = ?, price = ?, description = ? WHERE pid = ?';
     let query = db.query(sql, [req.body.catid, req.body.name, req.body.price, req.body.description, req.params.id], (err, result) => {
         if (err) throw err;
+        updateCategoryPage(req.body.catid);
+        updateProductData();
         res.send('Product updated');
     });
 });
+
+// 更新类别页面
+function updateCategoryPage(catid) {
+    let sql = 'SELECT * FROM products WHERE catid = ?';
+    db.query(sql, [catid], (err, products) => {
+        if (err) throw err;
+
+        let categorySql = 'SELECT name FROM categories WHERE catid = ?';
+        db.query(categorySql, [catid], (err, category) => {
+            if (err) throw err;
+
+            if (category.length === 0) {
+                console.error('Category not found');
+                return;
+            }
+
+            const categoryName = category[0].name.replace(/\s+/g, '_').toLowerCase();
+            const filePath = path.join(__dirname, `html/${categoryName}.html`);
+
+            let htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${category[0].name}</title>
+                    <link rel="stylesheet" href="../css/style.css">
+                    <script src="../js/productdata.js" defer></script>
+                    <script src="../js/cart.js" defer></script>
+                </head>
+                <body>
+                    <header>
+                        <h1>${category[0].name}</h1>
+                        <nav>
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li class="shopping-list">
+                                    <a href="cart.html">Cart</a>
+                                    <ul class="dropdown" id="shopping-list-dropdown"></ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </header>
+                    <main>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="${categoryName}.html">${category[0].name}</a></li>
+                            </ol>
+                        </nav>
+                        <section class="product-list">
+            `;
+
+            products.forEach(product => {
+                htmlContent += `
+                    <article class="product">
+                        <a href="product.html?productid=${product.pid}">
+                            <img src="../${product.image}" alt="Product ${product.pid}">
+                        </a>
+                        <h2>${product.name}</h2>
+                        <p>Price: $${product.price}</p>
+                    </article>
+                `;
+            });
+
+            htmlContent += `
+                        </section>
+                        <div class="pagination">
+                            <a href="${categoryName}.html?page=1">1</a>
+                        </div>
+                    </main>
+                    <footer>
+                        <p>&copy; 2025 ShoppingRed Mall</p>
+                    </footer>
+                </body>
+                </html>
+            `;
+
+            fs.writeFileSync(filePath, htmlContent, 'utf8');
+        });
+    });
+}
+
+// 更新产品数据
+function updateProductData() {
+    let sql = `
+        SELECT p.pid, p.name, p.description, p.price, p.image, c.name as category
+        FROM products p
+        JOIN categories c ON p.catid = c.catid
+    `;
+    db.query(sql, (err, products) => {
+        if (err) throw err;
+
+        let productDataContent = `
+            // productdata.js
+
+            const productdata = {
+        `;
+
+        products.forEach(product => {
+            productDataContent += `
+                ${product.pid}: {
+                    name: '${product.name}',
+                    description: '${product.description}',
+                    price: ${product.price},
+                    image: '../${product.image}',
+                    category: '${product.category.replace(/\s+/g, '_').toLowerCase()}'
+                },
+            `;
+        });
+
+        productDataContent += `
+            };
+
+            // Function to get product details by productid
+            function getProductDetails(productid) {
+                return productdata[productid];
+            }
+        `;
+
+        fs.writeFileSync(path.join(__dirname, 'js/productdata.js'), productDataContent, 'utf8');
+    });
+}
 
 // 获取所有类别
 app.get('/categories', (req, res) => {
@@ -180,7 +312,7 @@ app.get('/products/:catid', (req, res) => {
 
 // 获取产品详情
 app.get('/product/:pid', (req, res) => {
-    let sql = 'SELECT * FROM products WHERE pid = ?';
+    let sql = 'SELECT p.*, c.name as category FROM products p JOIN categories c ON p.catid = c.catid WHERE p.pid = ?';
     let query = db.query(sql, [req.params.pid], (err, result) => {
         if (err) throw err;
         res.json(result[0]);

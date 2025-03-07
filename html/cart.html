@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Shopping Cart</title>
     <link rel="stylesheet" href="../css/style.css">
-    <!-- Link to the external JavaScript file for product data -->
     <script src="../js/productdata.js" defer></script>
-    
+    <script src="../js/cart.js" defer></script>
 </head>
 <body>
 
@@ -15,8 +14,11 @@
         <h1>Your Shopping Cart</h1>
         <nav>
             <ul>
-                <li><a href="../html/index.html">Home</a></li>
-                <li><a href="../html/cart.html">Cart</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li class="shopping-list">
+                    <a href="cart.html">Cart</a>
+                    <ul class="dropdown" id="shopping-list-dropdown"></ul>
+                </li>
             </ul>
         </nav>
     </header>
