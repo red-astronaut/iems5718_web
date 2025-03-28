@@ -6,3 +6,5 @@ It a web programe project
 Upload the phase 1's code, index.html to login in the shopping mall homepage. 
 And github web link: https://red-astronaut.github.io/iems5718_web/html/index.html
 
+3.8
+phase2B and phase 3 is ok, and deploy on the azure.

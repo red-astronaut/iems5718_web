@@ -20,7 +20,51 @@ function updateShoppingList() {
         cart.forEach(item => {
             const product = getProductDetails(item.productid);
             const listItem = document.createElement('li');
-            listItem.textContent = `${product.name} - Quantity: ${item.quantity}`;
+            listItem.innerHTML = `
+                <span>${product.name}</span>
+                <span>Price: $${product.price.toFixed(2)}</span>
+                <div>
+                    <span>Quantities:</span>
+                    <input type="number" class="quantity" value="${item.quantity}" min="1" style="width: 50px;">
+                    <button class="increment">+</button>
+                    <button class="decrement">-</button>
+                </div>
+            `;
+
+            // Add increment and decrement buttons
+            const incrementButton = listItem.querySelector('.increment');
+            incrementButton.addEventListener('click', () => {
+                item.quantity++;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateShoppingList();
+            });
+
+            const decrementButton = listItem.querySelector('.decrement');
+            decrementButton.addEventListener('click', () => {
+                if (item.quantity > 1) {
+                    item.quantity--;
+                } else {
+                    if (confirm('This is the last item. Do you want to delete it?')) {
+                        cart.splice(cart.indexOf(item), 1);
+                    }
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateShoppingList();
+            });
+
+            // Add quantity input change event
+            const quantityInput = listItem.querySelector('.quantity');
+            quantityInput.addEventListener('change', (event) => {
+                const newQuantity = parseInt(event.target.value);
+                if (newQuantity > 0) {
+                    item.quantity = newQuantity;
+                } else {
+                    cart.splice(cart.indexOf(item), 1);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateShoppingList();
+            });
+
             shoppingListDropdown.appendChild(listItem);
             totalPrice += product.price * item.quantity;
         });
@@ -102,4 +146,8 @@ function clearCart() {
         updateShoppingList();
         alert('Cart has been cleared.');
     }
+}
+
+function getProductDetails(productid) {
+    return productdata[productid];
 }

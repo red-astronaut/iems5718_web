@@ -41,7 +41,7 @@
                 addToCartButton.addEventListener('click', function() {
                     const quantity = parseInt(quantityInput.value);
                     if (quantity > 0) {
-                        addToCart(productid, quantity); // Call addToCart function from cart.js with quantity
+                        addToCart(productid, quantity); // Call addToCart function with quantity
                         alert('Success to add item');
                     } else {
                         alert('Please enter a valid quantity');
@@ -51,7 +51,78 @@
                 // If product is not found
                 document.querySelector('.product-info').innerHTML = '<p>Product not found.</p>';
             }
+
+            // Load and display the shopping cart
+            updateShoppingList();
         });
+
+        // Function to add product to the cart
+        function addToCart(productid, quantity) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const productInCart = cart.find(item => item.productid === productid);
+            if (productInCart) {
+                productInCart.quantity += quantity;
+            } else {
+                cart.push({ productid: productid, quantity: quantity });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+        }
+
+        // Function to update the cart display
+        function updateCartDisplay() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartDropdown = document.getElementById('shopping-list-dropdown');
+            cartDropdown.innerHTML = '';
+
+            let totalAmount = 0;
+
+            cart.forEach(item => {
+                const product = getProductDetails(item.productid);
+                const cartItem = document.createElement('li');
+                cartItem.innerHTML = `
+                    <span>Name: ${product.name}</span>
+                    <span>Price: $${product.price.toFixed(2)}</span>
+                    <span>Quantity: ${item.quantity}</span>
+                    <button class="increment">+</button>
+                    <button class="decrement">-</button>
+                `;
+
+                // Add increment and decrement buttons
+                const incrementButton = cartItem.querySelector('.increment');
+                incrementButton.addEventListener('click', () => {
+                    item.quantity++;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartDisplay();
+                });
+
+                const decrementButton = cartItem.querySelector('.decrement');
+                decrementButton.addEventListener('click', () => {
+                    if (item.quantity > 1) {
+                        item.quantity--;
+                    } else {
+                        cart.splice(cart.indexOf(item), 1);
+                    }
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartDisplay();
+                });
+
+                cartDropdown.appendChild(cartItem);
+
+                totalAmount += product.price * item.quantity;
+            });
+
+            const totalAmountItem = document.createElement('li');
+            totalAmountItem.textContent = `Total Amount: $${totalAmount.toFixed(2)}`;
+            cartDropdown.appendChild(totalAmountItem);
+        }
+
+        // Function to get product details by productid
+        function getProductDetails(productid) {
+            return productdata[productid];
+        }
     </script>
 </head>
 <body>
@@ -62,7 +133,7 @@
             <ul>
                 <li><a href="../html/index.html">Home</a></li>
                 <li class="shopping-list">
-                    <a href="../html/cart.html">Cart</a>
+                    <a href="#">Cart</a>
                     <ul class="dropdown" id="shopping-list-dropdown">
                         <!-- Shopping list items will be dynamically inserted here -->
                     </ul>

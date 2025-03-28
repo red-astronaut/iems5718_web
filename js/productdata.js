@@ -35,6 +35,14 @@
                     category: 'tools'
                 },
             
+                32: {
+                    name: 'saw',
+                    description: 'stupid item',
+                    price: 8.57,
+                    image: '../uploads/thumbnail-productImage-1742665680321.png',
+                    category: 'tools'
+                },
+            
                 5: {
                     name: 'Duffy doll',
                     description: 'A cute Duffy doll.',

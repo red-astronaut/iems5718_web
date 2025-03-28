@@ -20,9 +20,9 @@
     <main>
         <section>
             <h2>Manage Categories</h2>
-            <form id="category-form">
+            <form id="category-form" method="POST" action="/addCategory">
                 <label for="category-name">Category Name:</label>
-                <input type="text" id="category-name" name="name" required>
+                <input type="text" id="category-name" name="name" required pattern="[A-Za-z\s]+" title="Only letters and spaces allowed">
                 <button type="submit">Add Category</button>
             </form>
             <ul id="category-list"></ul>
@@ -30,11 +30,11 @@
 
         <section>
             <h2>Manage Products</h2>
-            <form id="product-form" enctype="multipart/form-data">
+            <form id="product-form" enctype="multipart/form-data" method="POST" action="/addProduct">
                 <label for="product-category">Category:</label>
                 <select id="product-category" name="catid" required></select>
                 <label for="product-name">Product Name:</label>
-                <input type="text" id="product-name" name="name" required>
+                <input type="text" id="product-name" name="name" required pattern="[A-Za-z\s]+" title="Only letters and spaces allowed">
                 <label for="product-price">Price($):</label>
                 <input type="number" id="product-price" name="price" step="0.01" required>
                 <label for="product-description">Description:</label>
@@ -52,3 +52,11 @@
     </footer>
 </body>
 </html>
+
+app.get('/html/admin.html', authenticateToken, (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).send('Access denied');
+    }
+
+    res.sendFile(path.join(__dirname, 'html/admin.html'));
+});
