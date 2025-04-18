@@ -26,8 +26,19 @@ db.connect((err) => {
     console.log('MySQL Connected...');
 });
 
-// 使用cors中间件
-app.use(cors());
+// 配置 CORS
+app.use(cors({
+    origin: true, // 允许所有来源
+    credentials: true // 允许发送凭证
+}));
+
+// 设置其他必要的响应头
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 // 配置body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -137,11 +148,14 @@ app.post('/login', (req, res) => {
             // 生成 JWT
             const token = jwt.sign({ userid: user.userid, email: user.email, isAdmin: user.isAdmin }, JWT_SECRET, { expiresIn: '3d' });
 
-            // 设置 Cookie
+            // 设置 cookie
             res.cookie('authToken', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                maxAge: 3 * 24 * 60 * 60 * 1000 // 3 天
+                sameSite: 'Lax',
+                domain: '172.167.9.47', // 设置为您的域名
+                path: '/',
+                maxAge: 3 * 24 * 60 * 60 * 1000 // 3天
             });
 
             // 重定向到管理员面板或主页
@@ -500,9 +514,16 @@ app.get('/currentUser', (req, res) => {
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
+            console.error('Token verification error:', err);
             return res.json({ message: 'Please login' });
         }
-        res.json({ email: user.email });
+        // 添加响应头
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.json({ 
+            email: user.email,
+            isAdmin: user.isAdmin 
+        });
     });
 });
 
@@ -527,7 +548,7 @@ app.get('/admin', (req, res) => {
             return;
         }
 
-        res.redirect('/html/admin.html');
+        res.sendFile(path.join(__dirname, 'html', 'admin.html'));
     });
 });
 
@@ -537,3 +558,26 @@ const HOST = '0.0.0.0'
 app.listen(PORT, () => {
     console.log(`Server started on http://${HOST}:port ${PORT}`);
 });
+
+//nginx sudo nano /etc/nginx/sites-available/default
+// server {
+//     listen 80;
+//     server_name 172.167.9.47;
+
+//     location / {
+//         proxy_pass http://localhost:5000;
+//         proxy_http_version 1.1;
+//         proxy_set_header Upgrade $http_upgrade;
+//         proxy_set_header Connection 'upgrade';
+//         proxy_set_header Host $host;
+//         proxy_cache_bypass $http_upgrade;
+//         proxy_set_header X-Real-IP $remote_addr;
+//         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        
+//         # 添加 CORS headers
+//         add_header 'Access-Control-Allow-Credentials' 'true';
+//         add_header 'Access-Control-Allow-Origin' $http_origin;
+//         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+//         add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+//     }
+// }

@@ -38,7 +38,7 @@
                 32: {
                     name: 'saw',
                     description: 'stupid item',
-                    price: 8.57,
+                    price: 8.6,
                     image: '../uploads/thumbnail-productImage-1742665680321.png',
                     category: 'tools'
                 },

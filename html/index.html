@@ -18,12 +18,20 @@
                 <li class="shopping-list">
                     <a href="cart.html">Cart</a>
                     <ul class="dropdown" id="shopping-list-dropdown">
-
                     </ul>
                 </li>
-                <li><a href="/login">Admin</a></li> 
+                <li><a href="/admin" id="admin-link">Admin</a></li>
             </ul>
         </nav>
+
+        <!-- 用户信息显示 -->
+        <div id="user-info">
+            <span id="user-email"></span>
+            <form id="logout-form" method="POST" action="/logout" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+        <script src="../js/auth.js" ></script>
     </header>
 
     <main>
@@ -60,6 +68,5 @@
     <footer>
         <p>&copy; 2025 ShoppingRed Mall Copyright</p>
     </footer>
-
 </body>
 </html>

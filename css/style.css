@@ -263,7 +263,6 @@ button:hover {
     font-size: 16px; /* Adjust font size */
 }
 
-
 /* New styles for button container */
 .button-container {
     display: flex;
@@ -277,4 +276,191 @@ button:hover {
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+
+/* 用户信息容器样式 */
+#user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 用户邮箱样式 */
+#user-email {
+    color: #9f9f03;
+    font-weight: bold;
+}
+
+/* Logout 按钮样式 */
+#logout-form button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#logout-form button:hover {
+    background-color: #c82333;
+}
+
+/* 登录和修改密码页面的通用样式 */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 垂直居中 */
+    background-color: #f4f4f4; /* 与其他页面背景一致 */
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px; /* 增加最大宽度从 400px 到 600px */
+}
+
+.auth-form {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px; /* 增加最大宽度从 400px 到 600px */
+}
+
+.auth-form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.auth-form button:hover {
+    background-color: #0056b3;
+}
+
+/* 链接样式 */
+.auth-form a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.auth-form a:hover {
+    text-decoration: underline;
+}
+
+/* 登录和修改密码页面样式 */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px; /* 增加最大宽度从 400px 到 600px */
+}
+
+.auth-container h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: bold;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.auth-form button:hover {
+    background-color: #0056b3;
+}
+
+.auth-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.auth-links p {
+    margin: 10px 0;
+}
+
+.auth-links a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+/* 添加响应式布局 */
+@media (max-width: 768px) {
+    .auth-container,
+    .auth-form {
+        max-width: 90%; /* 在小屏幕上使用百分比宽度 */
+        padding: 20px;
+    }
 }

@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const plainTextPassword = '123456'; // 您的密码
+const plainTextPassword = '111111'; // 您的密码
 const saltRounds = 10;
 
 bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {
