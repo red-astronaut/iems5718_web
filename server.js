@@ -161,47 +161,45 @@ app.post('/logout', (req, res) => {
 });
 
 // GET 路由：返回修改密码页面
-app.get('/changePassword', (req, res) => {  // 移除 authenticateToken 中间件
+app.get('/changePassword', (req, res) => {
     res.sendFile(path.join(__dirname, 'html/change_password.html'));
 });
 
 // POST 路由：处理密码更改逻辑
-app.post('/changePassword', authenticateToken, (req, res) => {
-    const { email, currentPassword, newPassword } = req.body;
+app.post('/changePassword', (req, res) => {
+    const { email, newPassword } = req.body;
+    console.log('Password change request for:', email);
 
-    if (!email || !currentPassword || !newPassword) {
-        return res.status(400).send('Invalid input');
+    if (!email || !newPassword) {
+        return res.status(400).send('Email and new password are required');
     }
 
-    const sql = 'SELECT * FROM users WHERE email = ? AND userid = ?';
-    db.query(sql, [email, req.user.userid], (err, results) => {
-        if (err) throw err;
+    // 检查用户是否存在
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Server error occurred');
+        }
 
         if (results.length === 0) {
-            return res.status(404).send('Email not found or does not match the logged-in user');
+            return res.status(404).send('Email not found');
         }
 
         const user = results[0];
 
-        // 验证当前密码
-        bcrypt.compare(currentPassword, user.password, (err, isMatch) => {
-            if (err) throw err;
-
-            if (!isMatch) {
-                return res.status(401).send('Current password is incorrect');
+        // 直接更新新密码
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+        const updateSql = 'UPDATE users SET password = ? WHERE email = ?';
+        
+        db.query(updateSql, [hashedPassword, email], (err, result) => {
+            if (err) {
+                console.error('Update error:', err);
+                return res.status(500).send('Failed to update password');
             }
 
-            // 哈希新密码
-            const hashedPassword = bcrypt.hashSync(newPassword, 10);
-
-            const updateSql = 'UPDATE users SET password = ? WHERE userid = ?';
-            db.query(updateSql, [hashedPassword, req.user.userid], (err, result) => {
-                if (err) throw err;
-
-                // 清除身份令牌并重定向到登录页面
-                res.clearCookie('authToken');
-                res.send('Password changed successfully. Please log in again.');
-            });
+            res.status(200).send('Password changed successfully. Please log in.');
+            console.log('Password changed successfully for:', email);
         });
     });
 });

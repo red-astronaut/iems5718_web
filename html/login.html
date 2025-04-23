@@ -22,5 +22,47 @@
             </div>
         </div>
     </div>
+    <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        fetch('/login', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: formData.get('email'),
+                password: formData.get('password')
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Login failed');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirectUrl;
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            alert('Login failed. Please try again.');
+        });
+    });
+    </script>
+
+<!-- <script>
+    // 只添加简单的错误处理
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('error-message');
+
+    if (window.location.search.includes('error')) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Login failed. Please try again.';
+    }
+</script> -->
 </body>
 </html>

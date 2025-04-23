@@ -26,17 +26,30 @@ db.connect((err) => {
     console.log('MySQL Connected...');
 });
 
-// 配置 CORS
+// 更新 CORS 配置
 app.use(cors({
-    origin: true, // 允许所有来源
-    credentials: true // 允许发送凭证
+    origin: function(origin, callback) {
+        const allowedOrigins = [
+            'http://172.167.9.47',
+            'https://s12.iems5718.ie.cuhk.edu.hk',
+            'http://localhost:5000'
+        ];
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // 设置其他必要的响应头
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
@@ -119,6 +132,7 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'html/login.html'));
 });
 
+// 修改登录时的 cookie 设置
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -148,22 +162,29 @@ app.post('/login', (req, res) => {
             // 生成 JWT
             const token = jwt.sign({ userid: user.userid, email: user.email, isAdmin: user.isAdmin }, JWT_SECRET, { expiresIn: '3d' });
 
-            // 设置 cookie
-            res.cookie('authToken', token, {
+            // 根据请求来源设置不同的 cookie 选项
+            const isSecure = req.get('X-Forwarded-Proto') === 'https';
+            const cookieOptions = {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Lax',
-                domain: '172.167.9.47', // 设置为您的域名
+                secure: isSecure,
+                sameSite: isSecure ? 'strict' : 'lax',
                 path: '/',
                 maxAge: 3 * 24 * 60 * 60 * 1000 // 3天
-            });
+            };
 
-            // 重定向到管理员面板或主页
-            if (user.isAdmin) {
-                res.redirect('/html/admin.html'); // 修改为定向到 admin.html
-            } else {
-                res.redirect('/html/index.html'); // 修改为定向到 index.html
+            // 根据请求来源设置 domain
+            if (req.get('host').includes('iems5718.ie.cuhk.edu.hk')) {
+                cookieOptions.domain = '.iems5718.ie.cuhk.edu.hk';
             }
+
+            res.cookie('authToken', token, cookieOptions);
+            
+            // 返回 JSON 响应而不是重定向
+            res.json({
+                success: true,
+                isAdmin: user.isAdmin,
+                redirectUrl: user.isAdmin ? '/html/admin.html' : '/html/index.html'
+            });
         });
     });
 });
@@ -504,25 +525,40 @@ app.get('/product/:pid', (req, res) => {
     });
 });
 
-// 获取当前登录用户信息
 app.get('/currentUser', (req, res) => {
     const token = req.cookies.authToken;
     
     if (!token) {
-        return res.json({ message: 'Please login' });
+        console.log('No token found in cookies');
+        return res.status(401).json({ message: 'Please login' });
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
-            console.error('Token verification error:', err);
-            return res.json({ message: 'Please login' });
+            console.log('Token verification error:', err);
+            return res.status(401).json({ message: 'Invalid token' });
         }
-        // 添加响应头
-        res.header('Access-Control-Allow-Credentials', 'true');
-        res.header('Access-Control-Allow-Origin', req.headers.origin);
-        res.json({ 
-            email: user.email,
-            isAdmin: user.isAdmin 
+
+        // 从数据库获取最新的用户信息
+        const sql = 'SELECT email, isAdmin FROM users WHERE userid = ?';
+        db.query(sql, [user.userid], (err, results) => {
+            if (err) {
+                console.log('Database error:', err);
+                return res.status(500).json({ message: 'Database error' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            // 设置 CORS 和 cookie 相关的响应头
+            res.header('Access-Control-Allow-Credentials', 'true');
+            res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://172.167.9.47');
+            
+            res.json({
+                email: results[0].email,
+                isAdmin: results[0].isAdmin
+            });
         });
     });
 });

@@ -20,11 +20,11 @@ function updateUserInfo() {
 document.addEventListener('DOMContentLoaded', updateUserInfo);
 
 
-// Azure
+// Azure 的代码
 // function updateUserInfo() {
 //     fetch('/currentUser', {
 //         method: 'GET',
-//         credentials: 'include',  // 确保发送 cookies
+//         credentials: 'include',  // 关键：确保发送 cookies
 //         headers: {
 //             'Accept': 'application/json',
 //             'Content-Type': 'application/json'
@@ -42,12 +42,14 @@ document.addEventListener('DOMContentLoaded', updateUserInfo);
         
 //         if (data.email) {
 //             userEmail.textContent = data.email;
+//             console.log('User email updated:', data.email); // 添加调试日志
 //         } else {
 //             userEmail.textContent = data.message || 'Please login';
+//             console.log('No email found:', data.message); // 添加调试日志
 //         }
 //     })
 //     .catch(error => {
-//         console.error('Error:', error);
+//         console.error('Error fetching user info:', error);
 //         const userEmail = document.getElementById('user-email');
 //         if (userEmail) {
 //             userEmail.textContent = 'Please login';
@@ -58,5 +60,5 @@ document.addEventListener('DOMContentLoaded', updateUserInfo);
 // // 页面加载时更新用户信息
 // document.addEventListener('DOMContentLoaded', updateUserInfo);
 
-// // 每30秒更新一次用户信息
+// // 可选：定期更新用户信息
 // setInterval(updateUserInfo, 30000);

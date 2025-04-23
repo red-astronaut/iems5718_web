@@ -20,10 +20,34 @@
     <div id="user-info">
         <span id="user-email"></span>
         <form id="logout-form" method="POST" action="/logout" style="display: inline;">
-            <button type="submit">Logout</button>
+            <button type="submit" class="logout-btn">Logout</button>
         </form>
     </div>
     <script src="../js/auth.js" ></script>
+    <script>
+    document.getElementById('logout-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        fetch('/logout', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                throw new Error('Logout failed');
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            alert('Logout failed. Please try again.');
+        });
+    });
+    </script>
 
     <main>
         <section>

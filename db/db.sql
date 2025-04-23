@@ -22,10 +22,20 @@ CREATE TABLE products (
 );
 -- 插入示例分类数据
 INSERT INTO categories (name) VALUES 
+('daily_essentials'),
+('Tools'),
+('disney_gifts');
 ;
 
--- 插入示例商品数据
 INSERT INTO products (name, price, description, catid, image) VALUES 
+('Calendar', 12.00, 'A moveable calendar with adjustable labels.', 1, '../Figure/calendar.png'),
+('Cup', 3.99, 'A cup with a unique design.', 1, '../Figure/cup.png'),
+('Hammer', 6.30, 'A hammer for all your hammering needs.', 2, '../Figure/hammer.png'),
+('Pincers', 5.50, 'A good pincers.', 2, '../Figure/pincers.png'),
+('Duffy doll', 30.00, 'A cute Duffy doll.', 3, '../Figure/Duffy.png'),
+('Beller doll', 188.00, 'A cute Beller doll.', 3, '../Figure/Beller.png'),
+('Olu doll', 999.00, 'A cute and cool Olu doll.', 3, '../Figure/olu.png'),
+('saw', 3.70, '111', 2, '../Figure/saw.png');
 ;
 
 -- 创建用户表
